@@ -87,7 +87,10 @@ const REACT_INTERNAL_NAMES = new Set([
 
 let cachedIsNextProject: boolean | undefined;
 
-export const checkIsNextProject = (): boolean => {
+export const checkIsNextProject = (revalidate?: boolean): boolean => {
+  if (revalidate) {
+    cachedIsNextProject = undefined;
+  }
   cachedIsNextProject ??=
     typeof document !== "undefined" &&
     Boolean(document.getElementById("__NEXT_DATA__") || document.querySelector("nextjs-portal"));
