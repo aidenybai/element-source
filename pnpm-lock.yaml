@@ -24,7 +24,7 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  packages/dom-to-source:
+  packages/element-source:
     dependencies:
       bippy:
         specifier: ^0.5.32

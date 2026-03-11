@@ -1,4 +1,4 @@
-# dom-to-source
+# element-source
 
 ## 0.0.1
 

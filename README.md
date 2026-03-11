@@ -1,4 +1,4 @@
-# dom-to-source
+# element-source
 
 Resolve any DOM element back to its source file, line, column, and component name. Works with React, Next.js (including RSC), Svelte, Vue, and Solid.
 
@@ -10,7 +10,7 @@ import {
   resolveSource,
   resolveStack,
   resolveComponentName,
-} from "dom-to-source";
+} from "element-source";
 
 const info = await resolveElementInfo(element);
 // {
@@ -33,7 +33,7 @@ const name = await resolveComponentName(element);
 ## Custom Resolvers
 
 ```ts
-import { createSourceResolver, svelteResolver, vueResolver } from "dom-to-source";
+import { createSourceResolver, svelteResolver, vueResolver } from "element-source";
 
 const { resolveSource, resolveElementInfo } = createSourceResolver({
   resolvers: [svelteResolver, vueResolver],

@@ -1,5 +1,5 @@
 {
-  "name": "dom-to-source",
+  "name": "element-source",
   "private": true,
   "scripts": {
     "dev": "turbo dev",

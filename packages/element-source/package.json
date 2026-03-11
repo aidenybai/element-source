@@ -1,7 +1,6 @@
 {
-  "name": "dom-to-source",
+  "name": "element-source",
   "version": "0.0.1",
-  "private": true,
   "files": [
     "dist"
   ],

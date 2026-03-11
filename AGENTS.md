@@ -1,4 +1,4 @@
-# dom-to-source
+# element-source
 
 ## Coding Standards
 
