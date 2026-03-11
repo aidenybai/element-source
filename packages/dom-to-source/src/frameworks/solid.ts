@@ -17,11 +17,17 @@ interface LocationMatch {
   distance: number;
 }
 
+interface SolidRuntimeModule {
+  url: string;
+  content: string;
+}
+
 const HANDLER_PREFIX = "$$";
 const SOURCE_LOCATION_PATTERN = /location:\s*["']([^"']+:\d+:\d+)["']/g;
 const SOURCE_MODULE_PATH_PREFIX = "/src/";
 const CSS_FILE_EXTENSION = ".css";
 const IMAGE_IMPORT_SUFFIX = "?import";
+const RUNTIME_MODULES_KEY = "__SOLID_RUNTIME_MODULES__";
 const MODULE_SOURCE_CACHE = new Map<string, Promise<string | null>>();
 const HANDLER_STACK_CACHE = new Map<string, Promise<ElementSourceInfo[]>>();
 
@@ -57,9 +63,26 @@ const fetchModuleSource = (moduleUrl: string): Promise<string | null> => {
   return promise;
 };
 
+const readRuntimeModules = (): SolidRuntimeModule[] => {
+  if (typeof window === "undefined") return [];
+  const modules = Reflect.get(window, RUNTIME_MODULES_KEY);
+  if (!Array.isArray(modules)) return [];
+  return modules;
+};
+
 const findHandlerSourceMatch = async (
   handlerSource: string,
 ): Promise<HandlerSourceMatch | null> => {
+  for (const runtimeModule of readRuntimeModules()) {
+    const index = runtimeModule.content.indexOf(handlerSource);
+    if (index === -1) continue;
+    return {
+      moduleUrl: runtimeModule.url,
+      moduleContent: runtimeModule.content,
+      handlerSourceIndex: index,
+    };
+  }
+
   for (const moduleUrl of readModuleUrlsFromPerformance()) {
     const content = await fetchModuleSource(moduleUrl);
     if (!content) continue;
