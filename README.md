@@ -98,37 +98,3 @@ Formats an array of source frames.
 
 Returns the tag name from any host instance. Handles DOM `Element.tagName`, Ink `nodeName`, and falls back to `""`.
 
-## Examples
-
-```
-examples/
-  vite-react/          Vite + React
-  vite-vue/            Vite + Vue 3
-  vite-svelte/         Vite + Svelte 5
-  vite-solid/          Vite + Solid
-  nextjs/              Next.js App Router
-  webpack-react/       Webpack + React
-  astro/               Astro + React islands
-  remix/               Remix v2
-  react-router/        React Router + Vite
-  tanstack-start/      TanStack Start
-  ink-tui/             Ink TUI CLI
-  opentui/             OpenTUI (Bun)
-  capacitor-vue/       Capacitor + Vue (mobile)
-  capacitor-svelte/    Capacitor + Svelte (mobile)
-  expo-react-native/   Expo (React Native)
-```
-
-Each example has an inspector overlay — click any element to see its resolved source location.
-
-## Testing
-
-```bash
-pnpm lint          # oxlint + tsc
-pnpm test          # browser tests (Playwright + Chromium)
-pnpm test:node     # node tests (Ink, React Native) + E2E tests
-```
-
-## License
-
-MIT
