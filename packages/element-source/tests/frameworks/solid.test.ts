@@ -29,12 +29,7 @@ describe("solidResolver (real Solid rendering)", () => {
 
     const button = container.querySelector("[data-testid='solid-btn']")!;
     expect(button).not.toBeNull();
-
-    const clickHandler = Reflect.get(button, "$$click");
-    console.log("[solid] $$click exists:", Boolean(clickHandler));
-    console.log("[solid] $$click is function:", typeof clickHandler === "function");
-    console.log("[solid] $$click source preview:", String(clickHandler).slice(0, 80));
-    expect(clickHandler).toBeTypeOf("function");
+    expect(Reflect.get(button, "$$click")).toBeTypeOf("function");
   });
 
   it("resolves source when handler found in runtime modules", async () => {
@@ -48,8 +43,7 @@ describe("solidResolver (real Solid rendering)", () => {
     );
 
     const button = container.querySelector("[data-testid='solid-btn2']")!;
-    const clickHandler = Reflect.get(button, "$$click");
-    const handlerSource = String(clickHandler);
+    const handlerSource = String(Reflect.get(button, "$$click"));
 
     Reflect.set(window, "__SOLID_RUNTIME_MODULES__", [
       {
@@ -59,7 +53,6 @@ describe("solidResolver (real Solid rendering)", () => {
     ]);
 
     const stack = await solidResolver.resolveStack(button);
-    console.log("[solid resolveStack]", JSON.stringify(stack, null, 2));
 
     expect(stack.length).toBeGreaterThanOrEqual(1);
     expect(stack[0].filePath).toBe("src/components/Counter.tsx");
@@ -82,9 +75,6 @@ describe("solidResolver (real Solid rendering)", () => {
 
     const child = container.querySelector("[data-testid='solid-child']")!;
     const parent = container.querySelector("[data-testid='solid-parent']")!;
-
-    console.log("[solid] parent $$click exists:", Boolean(Reflect.get(parent, "$$click")));
-
     const parentClickSource = String(Reflect.get(parent, "$$click"));
 
     Reflect.set(window, "__SOLID_RUNTIME_MODULES__", [
@@ -95,7 +85,6 @@ describe("solidResolver (real Solid rendering)", () => {
     ]);
 
     const stack = await solidResolver.resolveStack(child);
-    console.log("[solid resolveStack child->parent]", JSON.stringify(stack, null, 2));
 
     expect(stack.length).toBeGreaterThanOrEqual(1);
     expect(stack[0].filePath).toBe("src/components/Parent.tsx");
@@ -112,7 +101,6 @@ describe("solidResolver (real Solid rendering)", () => {
 
     const element = container.querySelector("[data-testid='solid-no-handler']")!;
     const stack = await solidResolver.resolveStack(element);
-    console.log("[solid resolveStack no-handler]", JSON.stringify(stack, null, 2));
 
     expect(stack).toHaveLength(0);
   });

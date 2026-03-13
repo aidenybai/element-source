@@ -21,6 +21,7 @@ Resolve any rendered element back to its source file, line, column, and componen
 | Browser (DOM) | ✅ | ✅ | ✅ | ✅ |
 | React Native | ✅ | — | — | — |
 | Ink TUI (Node.js) | ✅ | — | — | — |
+| OpenTUI (Bun) | ✅ | — | — | ✅ |
 | Capacitor (WebView) | ✅ | ✅ | ✅ | ✅ |
 
 ### Bundlers
@@ -112,6 +113,7 @@ examples/
   react-router/        React Router + Vite
   tanstack-start/      TanStack Start
   ink-tui/             Ink TUI CLI
+  opentui/             OpenTUI (Bun)
   capacitor-vue/       Capacitor + Vue (mobile)
   capacitor-svelte/    Capacitor + Svelte (mobile)
   expo-react-native/   Expo (React Native)

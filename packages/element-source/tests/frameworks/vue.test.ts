@@ -27,9 +27,6 @@ describe("vueResolver (real Vue 3 SFC rendering)", () => {
     expect(child).not.toBeNull();
 
     const component = Reflect.get(child, "__vueParentComponent");
-    console.log("[vue] __vueParentComponent exists:", Boolean(component));
-    console.log("[vue] component type keys:", Object.keys(component?.type ?? {}));
-    console.log("[vue] component type __file:", component?.type?.__file);
     expect(component).toBeTruthy();
     expect(component.type.__file).toContain("VueChild.vue");
   });
@@ -40,7 +37,6 @@ describe("vueResolver (real Vue 3 SFC rendering)", () => {
 
     const child = container.querySelector("[data-testid='vue-child']")!;
     const stack = await vueResolver.resolveStack(child);
-    console.log("[vue resolveStack child SFC]", JSON.stringify(stack, null, 2));
 
     expect(stack.length).toBeGreaterThanOrEqual(1);
     expect(stack[0].filePath).toContain("VueChild.vue");
@@ -52,7 +48,6 @@ describe("vueResolver (real Vue 3 SFC rendering)", () => {
 
     const child = container.querySelector("[data-testid='vue-child']")!;
     const stack = await vueResolver.resolveStack(child);
-    console.log("[vue resolveStack hierarchy SFC]", JSON.stringify(stack, null, 2));
 
     expect(stack).toHaveLength(3);
 
@@ -72,7 +67,6 @@ describe("vueResolver (real Vue 3 SFC rendering)", () => {
 
     const parent = container.querySelector("[data-testid='vue-parent']")!;
     const stack = await vueResolver.resolveStack(parent);
-    console.log("[vue resolveStack parent SFC]", JSON.stringify(stack, null, 2));
 
     expect(stack.length).toBeGreaterThanOrEqual(1);
     expect(stack[0].filePath).toContain("VueParent.vue");
@@ -85,7 +79,6 @@ describe("vueResolver (real Vue 3 SFC rendering)", () => {
 
     const root = container.querySelector("#vue-app")!;
     const stack = await vueResolver.resolveStack(root);
-    console.log("[vue resolveStack root SFC]", JSON.stringify(stack, null, 2));
 
     expect(stack.length).toBeGreaterThanOrEqual(1);
     expect(stack[0].filePath).toContain("VueApp.vue");

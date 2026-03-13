@@ -1,0 +1,19 @@
+{
+  "name": "example-opentui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "DEV=true bun src/index.tsx",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.1.87",
+    "@opentui/react": "^0.1.87",
+    "bippy": "^0.5.32",
+    "element-source": "workspace:*",
+    "react": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14"
+  }
+}

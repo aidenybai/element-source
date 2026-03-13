@@ -23,12 +23,9 @@ describe("svelteResolver (real Svelte 5 rendering)", () => {
 
     const element = container.querySelector("[data-testid='svelte-child']")!;
     expect(element).not.toBeNull();
-
-    const meta = Reflect.get(element, "__svelte_meta");
-    console.log("[svelte] __svelte_meta on child:", JSON.stringify(meta, null, 2));
+    expect(Reflect.get(element, "__svelte_meta")).toBeTruthy();
 
     const stack = await svelteResolver.resolveStack(element);
-    console.log("[svelte resolveStack child]", JSON.stringify(stack, null, 2));
 
     expect(stack.length).toBeGreaterThanOrEqual(1);
     expect(stack[0].filePath).toContain("SvelteChild.svelte");
@@ -42,7 +39,6 @@ describe("svelteResolver (real Svelte 5 rendering)", () => {
     expect(child).not.toBeNull();
 
     const stack = await svelteResolver.resolveStack(child);
-    console.log("[svelte resolveStack nested]", JSON.stringify(stack, null, 2));
 
     expect(stack.length).toBeGreaterThanOrEqual(1);
     expect(stack[0].filePath).toContain("SvelteChild.svelte");
@@ -55,7 +51,6 @@ describe("svelteResolver (real Svelte 5 rendering)", () => {
     expect(parent).not.toBeNull();
 
     const stack = await svelteResolver.resolveStack(parent);
-    console.log("[svelte resolveStack parent]", JSON.stringify(stack, null, 2));
 
     expect(stack.length).toBeGreaterThanOrEqual(1);
     expect(stack[0].filePath).toContain("SvelteParent.svelte");
