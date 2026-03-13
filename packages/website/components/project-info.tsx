@@ -19,11 +19,9 @@ const FRAMEWORKS: Framework[] = [
 
 export const ProjectInfo = () => {
   return (
-    <div className="flex flex-col gap-2">
-      <h1 className="flex items-center gap-2 text-base font-medium tracking-tight">
-        <LogoIcon className="size-5" />
-        element-source
-      </h1>
+    <div className="flex flex-col gap-3">
+      <LogoIcon className="size-8 text-foreground" />
+      <h1 className="text-base font-medium tracking-tight">element-source</h1>
       <p className="text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
         Get the source file location of any DOM element.
       </p>
