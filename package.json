@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev",
-    "build": "turbo build",
+    "build": "turbo build --filter=!./examples/*",
     "lint": "turbo lint",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",

@@ -7,5 +7,22 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [
+    "@element-source/website",
+    "example-astro",
+    "example-capacitor-svelte",
+    "example-capacitor-vue",
+    "example-expo-react-native",
+    "example-ink-tui",
+    "example-nextjs",
+    "example-opentui",
+    "example-react-router",
+    "example-remix",
+    "example-tanstack-start",
+    "example-vite-react",
+    "example-vite-solid",
+    "example-vite-svelte",
+    "example-vite-vue",
+    "example-webpack-react"
+  ]
 }
