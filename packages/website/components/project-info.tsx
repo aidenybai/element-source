@@ -2,6 +2,7 @@ import { ReactIcon } from "@/components/icons/react-icon";
 import { VueIcon } from "@/components/icons/vue-icon";
 import { SvelteIcon } from "@/components/icons/svelte-icon";
 import { SolidIcon } from "@/components/icons/solid-icon";
+import { LogoIcon } from "@/components/icons/logo-icon";
 
 interface Framework {
   name: string;
@@ -19,7 +20,10 @@ const FRAMEWORKS: Framework[] = [
 export const ProjectInfo = () => {
   return (
     <div className="flex flex-col gap-2">
-      <h1 className="text-base font-medium tracking-tight">element-source</h1>
+      <h1 className="flex items-center gap-2 text-base font-medium tracking-tight">
+        <LogoIcon className="size-5" />
+        element-source
+      </h1>
       <p className="text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
         Get the source file location of any DOM element.
       </p>

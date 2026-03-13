@@ -12,15 +12,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "element-source",
-  description: "Resolve any rendered element back to its source file, line, column, and component name",
+  description: "Get the source file location of any DOM element. Works with React, Vue, Svelte, and Solid.",
   openGraph: {
     title: "element-source",
-    description: "Resolve any rendered element back to its source file, line, column, and component name",
+    description: "Get the source file location of any DOM element. Works with React, Vue, Svelte, and Solid.",
   },
   twitter: {
     card: "summary_large_image",
     title: "element-source",
-    description: "Resolve any rendered element back to its source file, line, column, and component name",
+    description: "Get the source file location of any DOM element. Works with React, Vue, Svelte, and Solid.",
   },
 };
 
