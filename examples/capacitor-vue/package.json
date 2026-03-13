@@ -1,0 +1,28 @@
+{
+  "name": "example-capacitor-vue",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "cap:init": "cap init 'Element Source Vue' com.elementsource.vue --web-dir dist",
+    "cap:add:ios": "cap add ios",
+    "cap:add:android": "cap add android",
+    "cap:sync": "cap sync",
+    "cap:open:ios": "cap open ios",
+    "cap:open:android": "cap open android",
+    "mobile:ios": "pnpm build && pnpm cap:sync && pnpm cap:open:ios",
+    "mobile:android": "pnpm build && pnpm cap:sync && pnpm cap:open:android"
+  },
+  "dependencies": {
+    "element-source": "workspace:*",
+    "vue": "^3.5.30"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "typescript": "^5.7.0",
+    "vite": "^6.3.0"
+  }
+}

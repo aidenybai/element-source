@@ -1,0 +1,26 @@
+---
+import SampleCard from "../components/react/sample-card";
+import InspectorOverlay from "../components/react/inspector-overlay";
+import Instrument from "../components/react/instrument";
+import SvelteCard from "../components/svelte-card.svelte";
+import VueCard from "../components/vue-card.vue";
+import SolidCard from "../components/solid/solid-card";
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Element Source - Astro</title>
+  </head>
+  <body style="font-family: system-ui; padding: 24px; max-width: 480px; margin: 0 auto;">
+    <h1>Element Source - Astro</h1>
+    <p style="color: #666; margin-bottom: 24px;">Click any element to inspect its source</p>
+    <Instrument client:only="react" />
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <SampleCard title="Counter" client:load />
+      <SvelteCard title="Counter" client:load />
+      <VueCard title="Counter" client:load />
+      <SolidCard title="Counter" client:load />
+    </div>
+    <InspectorOverlay client:load />
+  </body>
+</html>

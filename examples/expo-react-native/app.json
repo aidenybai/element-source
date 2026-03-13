@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Element Source - React Native",
+    "slug": "element-source-rn",
+    "version": "1.0.0",
+    "scheme": "element-source-rn",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "com.elementsource.rn"
+    },
+    "android": {
+      "package": "com.elementsource.rn"
+    },
+    "plugins": ["expo-router"]
+  }
+}

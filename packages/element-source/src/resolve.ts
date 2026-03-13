@@ -9,6 +9,7 @@ import { svelteResolver } from "./frameworks/svelte.js";
 import { vueResolver } from "./frameworks/vue.js";
 import { solidResolver } from "./frameworks/solid.js";
 import { getTagName } from "./utils/get-tag-name.js";
+import { isElement } from "./utils/is-element.js";
 
 const DEFAULT_RESOLVERS: FrameworkResolver[] = [svelteResolver, vueResolver, solidResolver];
 
@@ -27,38 +28,46 @@ const resolveFrameworkStack = async (
 export const createSourceResolver = (options: ResolverOptions = {}) => {
   const frameworkResolvers = options.resolvers ?? DEFAULT_RESOLVERS;
 
-  const resolveStack = async (element: Element): Promise<ElementSourceInfo[]> => {
-    const reactStack = await reactResolver.resolveStack(element);
-    const frameworkStack = await resolveFrameworkStack(element, frameworkResolvers);
+  const resolveStack = async (node: object): Promise<ElementSourceInfo[]> => {
+    const reactStack = await reactResolver.resolveStack(node);
 
-    if (reactStack.length > 0) return [...reactStack, ...frameworkStack];
-    return frameworkStack;
+    if (isElement(node)) {
+      const frameworkStack = await resolveFrameworkStack(node, frameworkResolvers);
+      if (reactStack.length > 0) return [...reactStack, ...frameworkStack];
+      return frameworkStack;
+    }
+
+    return reactStack;
   };
 
-  const resolveSource = async (element: Element): Promise<ElementSourceInfo | null> => {
-    const stack = await resolveStack(element);
+  const resolveSource = async (node: object): Promise<ElementSourceInfo | null> => {
+    const stack = await resolveStack(node);
     return stack[0] ?? null;
   };
 
-  const resolveComponentName = async (element: Element): Promise<string | null> => {
-    const reactName = await reactResolver.resolveComponentName?.(element);
+  const resolveComponentName = async (node: object): Promise<string | null> => {
+    const reactName = await reactResolver.resolveComponentName?.(node);
     if (reactName) return reactName;
 
-    const frameworkStack = await resolveFrameworkStack(element, frameworkResolvers);
-    const frameworkName = frameworkStack.find((frame) => frame.componentName)?.componentName;
-    return frameworkName ?? null;
+    if (isElement(node)) {
+      const frameworkStack = await resolveFrameworkStack(node, frameworkResolvers);
+      const frameworkName = frameworkStack.find((frame) => frame.componentName)?.componentName;
+      return frameworkName ?? null;
+    }
+
+    return null;
   };
 
-  const resolveElementInfo = async (element: Element): Promise<ElementInfo> => {
-    const stack = await resolveStack(element);
+  const resolveElementInfo = async (node: object): Promise<ElementInfo> => {
+    const stack = await resolveStack(node);
     const source = stack[0] ?? null;
     const componentName =
       stack.find((frame) => frame.componentName)?.componentName ??
-      (await reactResolver.resolveComponentName?.(element)) ??
+      (await reactResolver.resolveComponentName?.(node)) ??
       null;
 
     return {
-      tagName: getTagName(element),
+      tagName: getTagName(node),
       componentName,
       source,
       stack,

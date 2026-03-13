@@ -15,8 +15,9 @@ import {
   parseStack,
   type StackFrame,
 } from "bippy/source";
-import type { ElementSourceInfo, FrameworkResolver } from "../types.js";
+import type { ElementSourceInfo } from "../types.js";
 import { MIN_COMPONENT_NAME_LENGTH_CHARS, SYMBOLICATION_TIMEOUT_MS } from "../constants.js";
+import { isElement } from "../utils/is-element.js";
 
 interface NextJsRequestFrame {
   file: string;
@@ -246,21 +247,24 @@ const enrichServerFrameLocations = (rootFiber: Fiber, frames: StackFrame[]): Sta
   });
 };
 
-const findNearestFiberElement = (element: Element): Element => {
-  if (!isInstrumentationActive()) return element;
-  let current: Element | null = element;
-  while (current) {
-    if (getFiberFromHostInstance(current)) return current;
-    current = current.parentElement;
+const findNearestFiberNode = (node: object): object => {
+  if (!isInstrumentationActive()) return node;
+  if (getFiberFromHostInstance(node)) return node;
+  if (isElement(node)) {
+    let current: Element | null = node.parentElement;
+    while (current) {
+      if (getFiberFromHostInstance(current)) return current;
+      current = current.parentElement;
+    }
   }
-  return element;
+  return node;
 };
 
-const stackCache = new WeakMap<Element, Promise<StackFrame[] | null>>();
+const stackCache = new WeakMap<object, Promise<StackFrame[] | null>>();
 
-const fetchStackForElement = async (element: Element): Promise<StackFrame[] | null> => {
+const fetchStackForNode = async (node: object): Promise<StackFrame[] | null> => {
   try {
-    const fiber = getFiberFromHostInstance(element);
+    const fiber = getFiberFromHostInstance(node);
     if (!fiber) return null;
 
     const frames = await getOwnerStack(fiber);
@@ -276,14 +280,14 @@ const fetchStackForElement = async (element: Element): Promise<StackFrame[] | nu
   }
 };
 
-export const getReactStack = (element: Element): Promise<StackFrame[] | null> => {
+export const getReactStack = (node: object): Promise<StackFrame[] | null> => {
   if (!isInstrumentationActive()) return Promise.resolve([]);
 
-  const resolved = findNearestFiberElement(element);
+  const resolved = findNearestFiberNode(node);
   const cached = stackCache.get(resolved);
   if (cached) return cached;
 
-  const promise = fetchStackForElement(resolved);
+  const promise = fetchStackForNode(resolved);
   stackCache.set(resolved, promise);
   return promise;
 };
@@ -308,16 +312,16 @@ const resolveSourceFromStack = (stack: StackFrame[] | null): ElementSourceInfo |
   return null;
 };
 
-const resolveStack = async (element: Element): Promise<ElementSourceInfo[]> => {
-  const stack = await getReactStack(element);
+const resolveStack = async (node: object): Promise<ElementSourceInfo[]> => {
+  const stack = await getReactStack(node);
   const source = resolveSourceFromStack(stack);
   return source ? [source] : [];
 };
 
-const resolveComponentName = async (element: Element): Promise<string | null> => {
+const resolveComponentName = async (node: object): Promise<string | null> => {
   if (!isInstrumentationActive()) return null;
 
-  const stack = await getReactStack(element);
+  const stack = await getReactStack(node);
   if (stack) {
     for (const frame of stack) {
       if (frame.functionName && isSourceComponentName(frame.functionName)) {
@@ -326,7 +330,7 @@ const resolveComponentName = async (element: Element): Promise<string | null> =>
     }
   }
 
-  const resolved = findNearestFiberElement(element);
+  const resolved = findNearestFiberNode(node);
   const fiber = getFiberFromHostInstance(resolved);
   if (!fiber) return null;
 
@@ -342,8 +346,8 @@ const resolveComponentName = async (element: Element): Promise<string | null> =>
   return null;
 };
 
-export const reactResolver: FrameworkResolver = {
-  name: "react",
+export const reactResolver = {
+  name: "react" as const,
   resolveStack,
   resolveComponentName,
 };
