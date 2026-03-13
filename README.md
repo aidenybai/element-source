@@ -2,6 +2,8 @@
 
 Get the source file location of any DOM element. Works with React, Vue, Svelte, and Solid.
 
+> I originally built this to power [React Grab](https://www.react-grab.com/blog/intro), a way to select elements in the browser and give the source as context to coding agents. Agents are incredibly good and [token efficient](https://www.react-grab.com/blog/intro) at using file sources. Now anyone can use what makes React Grab possible.
+
 ## Installation
 
 ```bash
