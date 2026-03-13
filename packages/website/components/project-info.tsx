@@ -1,25 +1,39 @@
-const FEATURES = [
-  "Works with React 19, Next.js, Svelte 5, Vue 3, and Solid",
-  "Runs in Browser, React Native, Ink TUI, OpenTUI, and Capacitor",
-  "Compatible with any bundler \u2013 Vite, Webpack, Next.js, Astro, and more",
+import { ReactIcon } from "@/components/icons/react-icon";
+import { VueIcon } from "@/components/icons/vue-icon";
+import { SvelteIcon } from "@/components/icons/svelte-icon";
+import { SolidIcon } from "@/components/icons/solid-icon";
+
+interface Framework {
+  name: string;
+  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  color?: string;
+}
+
+const FRAMEWORKS: Framework[] = [
+  { name: "React", icon: ReactIcon, color: "#61DAFB" },
+  { name: "Vue", icon: VueIcon, color: "#4FC08D" },
+  { name: "Svelte", icon: SvelteIcon, color: "#FF3E00" },
+  { name: "Solid", icon: SolidIcon },
 ];
 
 export const ProjectInfo = () => {
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-base font-medium tracking-tight">element-source</h1>
-      <p className="text-sm leading-relaxed text-muted-foreground">
-        Resolve any rendered element back to its{" "}
-        <span className="font-medium text-foreground">source file, line, column, and component name</span>
+      <p className="text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
+        Get the source file location of any DOM element.
       </p>
-      <p className="text-sm leading-relaxed text-muted-foreground">
-        works across frameworks, bundlers, and runtimes. Pass any host instance &mdash; DOM node, React fiber, Ink element &mdash; and get back the exact source location.
-      </p>
-      <ul className="list-disc space-y-0.5 pl-4 text-sm leading-relaxed text-muted-foreground">
-        {FEATURES.map((feature) => (
-          <li key={feature}>{feature}</li>
+      <div className="flex items-center gap-3 pt-1">
+        {FRAMEWORKS.map(({ name, icon: Icon, color }) => (
+          <div
+            key={name}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground sm:text-[15px]"
+          >
+            <Icon className="size-3.5" style={color ? { color } : undefined} />
+            <span>{name}</span>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 # element-source
 
-Resolve any rendered element back to its source file, line, column, and component name. Works across frameworks, bundlers, and runtimes.
+Get the source file location of any DOM element. Works with React, Vue, Svelte, and Solid.
 
 ## Installation
 
@@ -9,6 +9,8 @@ npm install element-source
 ```
 
 ## Quick Start
+
+Pass any DOM element to `resolveElementInfo` to get its source file location, component name, and full component stack.
 
 ```ts
 import { resolveElementInfo } from "element-source";
@@ -22,7 +24,6 @@ const info = await resolveElementInfo(element);
 // }
 ```
 
-The API accepts any host instance (`object`), not just DOM `Element`. This enables React Native, Ink TUI, and other non-browser renderers that use React's fiber tree.
 
 ## API
 

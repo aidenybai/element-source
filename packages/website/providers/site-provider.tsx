@@ -21,7 +21,7 @@ export const useSite = () => {
 };
 
 const INSTALL_COMMAND = "npm install element-source";
-const AGENT_PROMPT = "Install element-source and use resolveElementInfo(element) to map any rendered DOM element back to its source file, line, column, and component name. Works with React 19, Next.js, Svelte 5, Vue 3, and Solid. See https://element-source.dev for the full API.";
+const AGENT_PROMPT = "npm install element-source, then fetch https://raw.githubusercontent.com/aidenybai/element-source/refs/heads/main/README.md for more info";
 
 interface SiteProviderProps {
   children: ReactNode;

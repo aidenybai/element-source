@@ -7,7 +7,7 @@ import { highlight } from "@/lib/shiki";
 import { CopyButton } from "@/components/copy-button";
 import { SiteProvider } from "@/providers/site-provider";
 import { ProjectInfo } from "@/components/project-info";
-import { CommandDisplay } from "@/components/command-display";
+import { HeroDemo } from "@/components/hero-demo";
 import { ActionButtons } from "@/components/action-buttons";
 
 export const dynamic = "force-static";
@@ -34,31 +34,11 @@ const CodeBlock = async ({ children, className }: CodeBlockProps) => {
 };
 
 const processReadme = (content: string): string => {
-  const lines = content.split("\n");
-  const result: string[] = [];
-  let isInBadgesBlock = false;
-
-  for (const line of lines) {
-    const isTitleLine = line.startsWith("# element-source");
-    const isBadgeLine = line.startsWith("[![");
-    const isEmpty = line.trim() === "";
-
-    if (isTitleLine) continue;
-
-    if (isBadgeLine) {
-      isInBadgesBlock = true;
-      continue;
-    }
-
-    if (isInBadgesBlock) {
-      if (!isBadgeLine && !isEmpty) isInBadgesBlock = false;
-      else continue;
-    }
-
-    result.push(line);
-  }
-
-  return result.join("\n");
+  const match = content.match(/^## /m);
+  if (!match || match.index === undefined) return content;
+  const sliced = content.slice(match.index);
+  const miscMatch = sliced.match(/\n## misc/i);
+  return miscMatch?.index !== undefined ? sliced.slice(0, miscMatch.index) : sliced;
 };
 
 const Home = async () => {
@@ -71,7 +51,7 @@ const Home = async () => {
       <SiteProvider>
         <main className="flex w-full max-w-lg flex-col items-start gap-10 px-6 py-16">
           <ProjectInfo />
-          <CommandDisplay />
+          <HeroDemo />
           <ActionButtons />
 
           <article className="w-full space-y-4 text-sm sm:text-[15px]">
@@ -83,7 +63,7 @@ const Home = async () => {
                   const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
                   return (
                     <h2
-                      className="mt-12 mb-3 scroll-mt-8 border-t border-border pt-8 text-base font-medium text-foreground"
+                      className="mt-12 mb-3 scroll-mt-8 border-t border-border pt-8 text-base font-medium text-foreground first:mt-0 first:border-t-0 first:pt-0"
                       id={id}
                       {...props}
                     >

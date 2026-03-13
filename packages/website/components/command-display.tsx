@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useSite } from "@/providers/site-provider";
 
 const INSTALL_COMMAND = "npm install element-source";
-const AGENT_PROMPT = "npm install element-source, then fetch element-source.dev/llms.txt for more info";
+const AGENT_PROMPT = "npm install element-source, then fetch https://raw.githubusercontent.com/aidenybai/element-source/refs/heads/main/README.md for more info";
 
 export const CommandDisplay = () => {
   const { activeTab, copied, setActiveTab, copyCommand } = useSite();
