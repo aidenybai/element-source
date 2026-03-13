@@ -1,5 +1,4 @@
-<img src="logo.svg" width="24" height="24" alt="element-source logo" /> element-source
-===
+# element-source
 
 Get the source file location of any DOM element. Works with React, Vue, Svelte, and Solid.
 
