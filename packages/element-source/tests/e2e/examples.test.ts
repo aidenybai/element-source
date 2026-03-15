@@ -24,13 +24,14 @@ interface DevServerApp {
 
 const STATIC_APPS: StaticApp[] = [
   { name: "vite-react", distPath: "vite-react/dist", port: BASE_PORT },
-  { name: "vite-vue", distPath: "vite-vue/dist", port: BASE_PORT + 1 },
-  { name: "vite-svelte", distPath: "vite-svelte/dist", port: BASE_PORT + 2 },
-  { name: "vite-solid", distPath: "vite-solid/dist", port: BASE_PORT + 3 },
-  { name: "webpack-react", distPath: "webpack-react/dist", port: BASE_PORT + 4 },
-  { name: "react-router", distPath: "react-router/dist", port: BASE_PORT + 5 },
-  { name: "nextjs", distPath: "nextjs/out", port: BASE_PORT + 6 },
-  { name: "astro", distPath: "astro/dist", port: BASE_PORT + 7 },
+  { name: "vite-preact", distPath: "vite-preact/dist", port: BASE_PORT + 1 },
+  { name: "vite-vue", distPath: "vite-vue/dist", port: BASE_PORT + 2 },
+  { name: "vite-svelte", distPath: "vite-svelte/dist", port: BASE_PORT + 3 },
+  { name: "vite-solid", distPath: "vite-solid/dist", port: BASE_PORT + 4 },
+  { name: "webpack-react", distPath: "webpack-react/dist", port: BASE_PORT + 5 },
+  { name: "react-router", distPath: "react-router/dist", port: BASE_PORT + 6 },
+  { name: "nextjs", distPath: "nextjs/out", port: BASE_PORT + 7 },
+  { name: "astro", distPath: "astro/dist", port: BASE_PORT + 8 },
 ];
 
 const DEV_SERVER_APPS: DevServerApp[] = [
@@ -180,25 +181,33 @@ const testAstroMultiFramework = () => {
     it("inspector resolves source from React island", async () => {
       await page.locator("[data-testid='inspector-toggle']").click();
       await page.locator("[data-testid='sample-card']").click();
-      await page.locator("[data-testid='result-panel']").waitFor({ state: "visible", timeout: 5000 });
+      await page
+        .locator("[data-testid='result-panel']")
+        .waitFor({ state: "visible", timeout: 5000 });
       expect(await page.locator("[data-testid='result-panel']").isVisible()).toBe(true);
     });
 
     it("inspector resolves source from Svelte island", async () => {
       await page.locator("[data-testid='svelte-card']").click();
-      await page.locator("[data-testid='result-panel']").waitFor({ state: "visible", timeout: 5000 });
+      await page
+        .locator("[data-testid='result-panel']")
+        .waitFor({ state: "visible", timeout: 5000 });
       expect(await page.locator("[data-testid='result-panel']").isVisible()).toBe(true);
     });
 
     it("inspector resolves source from Vue island", async () => {
       await page.locator("[data-testid='vue-card']").click();
-      await page.locator("[data-testid='result-panel']").waitFor({ state: "visible", timeout: 5000 });
+      await page
+        .locator("[data-testid='result-panel']")
+        .waitFor({ state: "visible", timeout: 5000 });
       expect(await page.locator("[data-testid='result-panel']").isVisible()).toBe(true);
     });
 
     it("inspector resolves source from Solid island", async () => {
       await page.locator("[data-testid='solid-card']").click();
-      await page.locator("[data-testid='result-panel']").waitFor({ state: "visible", timeout: 5000 });
+      await page
+        .locator("[data-testid='result-panel']")
+        .waitFor({ state: "visible", timeout: 5000 });
       expect(await page.locator("[data-testid='result-panel']").isVisible()).toBe(true);
     });
   });

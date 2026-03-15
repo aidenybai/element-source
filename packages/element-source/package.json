@@ -7,8 +7,8 @@
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "browser": "./dist/index.global.js",
+  "types": "./dist/index.d.ts",
   "unpkg": "./dist/index.global.js",
   "jsdelivr": "./dist/index.global.js",
   "exports": {
@@ -40,6 +40,7 @@
     "ink": "^6.8.0",
     "ink-testing-library": "^4.0.0",
     "playwright": "^1.58.2",
+    "preact": "^10.29.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-test-renderer": "^19.2.4",
