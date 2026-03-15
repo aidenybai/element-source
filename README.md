@@ -1,6 +1,6 @@
 # element-source
 
-Get the source file location of any DOM element. Works with React, Vue, Svelte, and Solid.
+Get the source file location of any DOM element. Works with React, Preact, Vue, Svelte, and Solid.
 
 > I originally built this to power [React Grab](https://www.react-grab.com/blog/intro), a way to select elements in the browser and give the source as context to coding agents. Agents are incredibly good and [token efficient](https://www.react-grab.com/blog/intro) at using file sources. Now anyone can use what makes React Grab possible.
 
@@ -9,6 +9,8 @@ Get the source file location of any DOM element. Works with React, Vue, Svelte, 
 ```bash
 npm install element-source
 ```
+
+If you're using Preact, import `preact/debug` in development so owner stacks and source locations are available.
 
 ## Quick Start
 
@@ -25,7 +27,6 @@ const info = await resolveElementInfo(element);
 //   stack: [...]
 // }
 ```
-
 
 ## API
 
@@ -123,6 +124,6 @@ Returns the tag name from any host instance. Handles DOM `Element.tagName`, Ink 
 
 ```ts
 getTagName(document.createElement("div")); // "div"
-getTagName({ nodeName: "ink-text" });       // "ink-text"
-getTagName({});                             // ""
+getTagName({ nodeName: "ink-text" }); // "ink-text"
+getTagName({}); // ""
 ```

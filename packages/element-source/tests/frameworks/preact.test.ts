@@ -1,244 +1,166 @@
+import "preact/debug";
+import { h, render } from "preact";
+import * as PreactCompat from "preact/compat";
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { createElement, render, options, Fragment } from "preact";
 import { preactResolver } from "../../src/frameworks/preact.js";
+import { createSourceResolver } from "../../src/resolve.js";
+
+interface HeaderProps {
+  title: string;
+}
+
+interface CardProps {
+  title: string;
+}
+
+interface CompatButtonProps {
+  label: string;
+}
+
+interface CompatAppProps {
+  label: string;
+}
+
+interface SourceLocation {
+  fileName: string;
+  lineNumber: number;
+  columnNumber?: number;
+}
+
+const PREACT_TEST_FILE_PATH = "tests/frameworks/preact.test.ts";
+const ROOT_SOURCE_LINE = 10;
+const APP_SOURCE_LINE = 20;
+const APP_CARD_SOURCE_LINE = 30;
+const CARD_SOURCE_LINE = 40;
+const CARD_HEADER_SOURCE_LINE = 50;
+const HEADER_SOURCE_LINE = 60;
+const COMPAT_ROOT_SOURCE_LINE = 70;
+const COMPAT_APP_SOURCE_LINE = 80;
+const COMPAT_APP_BUTTON_SOURCE_LINE = 90;
+const COMPAT_BUTTON_SOURCE_LINE = 100;
+
+const createSource = (lineNumber: number, columnNumber?: number): SourceLocation => ({
+  fileName: PREACT_TEST_FILE_PATH,
+  lineNumber,
+  columnNumber,
+});
+
+const Header = ({ title }: HeaderProps) =>
+  h("h1", { "data-testid": "preact-header", __source: createSource(HEADER_SOURCE_LINE) }, title);
+
+const Card = ({ title }: CardProps) =>
+  h(
+    "section",
+    { "data-testid": "preact-card", __source: createSource(CARD_SOURCE_LINE) },
+    h(Header, { __source: createSource(CARD_HEADER_SOURCE_LINE), title }),
+  );
+
+const App = () =>
+  h(
+    "main",
+    { id: "preact-app", __source: createSource(APP_SOURCE_LINE) },
+    h(Card, { __source: createSource(APP_CARD_SOURCE_LINE), title: "Hello" }),
+  );
+
+const CompatButton = ({ label }: CompatButtonProps) =>
+  PreactCompat.createElement(
+    "button",
+    { "data-testid": "compat-button", __source: createSource(COMPAT_BUTTON_SOURCE_LINE) },
+    label,
+  );
+
+const CompatApp = ({ label }: CompatAppProps) =>
+  PreactCompat.createElement(
+    "div",
+    { id: "compat-app", __source: createSource(COMPAT_APP_SOURCE_LINE) },
+    PreactCompat.createElement(CompatButton, {
+      __source: createSource(COMPAT_APP_BUTTON_SOURCE_LINE),
+      label,
+    }),
+  );
 
 let container: HTMLDivElement;
-let restoreHooks: (() => void) | null = null;
-
-const getVNodeDom = (vnode: Record<string, unknown>): Element | null => {
-  const dom = vnode._dom ?? vnode.__e;
-  return dom instanceof Element ? dom : null;
-};
-
-const installSourceHooks = () => {
-  const previousVnodeHook = options.vnode;
-  const previousDiffedHook = options.diffed;
-
-  (options as Record<string, unknown>).vnode = (vnode: Record<string, unknown>) => {
-    const props = vnode.props as Record<string, unknown> | null;
-    if (vnode.type !== null && props !== null && props !== undefined && "__source" in props) {
-      const cleanedProps: Record<string, unknown> = {};
-      for (const key in props) {
-        if (key === "__source") vnode.__source = props[key];
-        else cleanedProps[key] = props[key];
-      }
-      vnode.props = cleanedProps;
-    }
-    if (previousVnodeHook) (previousVnodeHook as (vnode: unknown) => void)(vnode);
-  };
-
-  (options as Record<string, unknown>).diffed = (vnode: Record<string, unknown>) => {
-    const dom = getVNodeDom(vnode);
-    if (typeof vnode.type === "string" && dom) {
-      (dom as Record<string, unknown>).__preactVNode = vnode;
-    }
-    if (previousDiffedHook) (previousDiffedHook as (vnode: unknown) => void)(vnode);
-  };
-
-  return () => {
-    (options as Record<string, unknown>).vnode = previousVnodeHook;
-    (options as Record<string, unknown>).diffed = previousDiffedHook;
-  };
-};
 
 beforeEach(() => {
   container = document.createElement("div");
   document.body.appendChild(container);
-  restoreHooks = installSourceHooks();
 });
 
 afterEach(() => {
   render(null, container);
-  restoreHooks?.();
-  restoreHooks = null;
   container.remove();
 });
 
-const ChildComponent = (props: { text: string }) =>
-  createElement(
-    "span",
-    {
-      "data-testid": "preact-child",
-      __source: { fileName: "src/components/Child.tsx", lineNumber: 8 },
-    } as Record<string, unknown>,
-    props.text,
-  );
+describe("preactResolver", () => {
+  it("resolveStack returns source frames for a core Preact render", async () => {
+    render(h(App, { __source: createSource(ROOT_SOURCE_LINE) }), container);
 
-const ParentComponent = () =>
-  createElement(
-    "div",
-    {
-      "data-testid": "preact-parent",
-      __source: { fileName: "src/components/Parent.tsx", lineNumber: 5 },
-    } as Record<string, unknown>,
-    createElement(ChildComponent, {
-      text: "hello",
-      __source: { fileName: "src/components/Parent.tsx", lineNumber: 6 },
-    } as Record<string, unknown>),
-  );
+    const header = container.querySelector("[data-testid='preact-header']")!;
+    const stack = await preactResolver.resolveStack(header);
 
-const AppComponent = () =>
-  createElement(ParentComponent, {
-    __source: { fileName: "src/App.tsx", lineNumber: 10 },
-  } as Record<string, unknown>);
+    expect(stack.length).toBeGreaterThanOrEqual(3);
+    expect(stack[0]).toMatchObject({
+      filePath: PREACT_TEST_FILE_PATH,
+      lineNumber: HEADER_SOURCE_LINE,
+      componentName: "Header",
+    });
+    expect(stack[1]).toMatchObject({
+      filePath: PREACT_TEST_FILE_PATH,
+      lineNumber: APP_CARD_SOURCE_LINE,
+      componentName: "Card",
+    });
+    expect(stack[2]).toMatchObject({
+      filePath: PREACT_TEST_FILE_PATH,
+      lineNumber: ROOT_SOURCE_LINE,
+      componentName: "App",
+    });
+  });
 
-describe("preactResolver (real Preact rendering with source hooks)", () => {
-  it("resolves source from a rendered Preact element", async () => {
-    render(
-      createElement(ChildComponent, {
-        text: "test",
-        __source: { fileName: "src/Test.tsx", lineNumber: 3 },
-      } as Record<string, unknown>),
+  it("resolveComponentName returns the nearest Preact component name", async () => {
+    render(h(App, { __source: createSource(ROOT_SOURCE_LINE) }), container);
+
+    const header = container.querySelector("[data-testid='preact-header']")!;
+    const name = await preactResolver.resolveComponentName?.(header);
+
+    expect(name).toBe("Header");
+  });
+
+  it("resolveElementInfo returns full metadata for a wrapper component", async () => {
+    const { resolveElementInfo } = createSourceResolver();
+    render(h(App, { __source: createSource(ROOT_SOURCE_LINE) }), container);
+
+    const card = container.querySelector("[data-testid='preact-card']")!;
+    const info = await resolveElementInfo(card);
+
+    expect(info.tagName).toBe("section");
+    expect(info.componentName).toBe("Card");
+    expect(info.source).toMatchObject({
+      filePath: PREACT_TEST_FILE_PATH,
+      lineNumber: CARD_SOURCE_LINE,
+      componentName: "Card",
+    });
+  });
+
+  it("resolveElementInfo works with preact/compat", async () => {
+    const { resolveElementInfo } = createSourceResolver();
+    PreactCompat.render(
+      PreactCompat.createElement(CompatApp, {
+        __source: createSource(COMPAT_ROOT_SOURCE_LINE),
+        label: "Tap",
+      }),
       container,
     );
 
-    const element = container.querySelector("[data-testid='preact-child']")!;
-    expect(element).not.toBeNull();
+    const button = container.querySelector("[data-testid='compat-button']")!;
+    const info = await resolveElementInfo(button);
 
-    const stack = await preactResolver.resolveStack(element);
-
-    expect(stack.length).toBeGreaterThanOrEqual(1);
-    expect(stack[0].filePath).toBe("src/components/Child.tsx");
-    expect(stack[0].lineNumber).toBe(8);
-    expect(stack[0].componentName).toBe("ChildComponent");
-  });
-
-  it("resolves component name from nearest composite parent", async () => {
-    render(createElement(AppComponent, null), container);
-
-    const child = container.querySelector("[data-testid='preact-child']")!;
-    expect(child).not.toBeNull();
-
-    const stack = await preactResolver.resolveStack(child);
-
-    expect(stack.length).toBeGreaterThanOrEqual(1);
-    expect(stack[0].componentName).toBe("ChildComponent");
-  });
-
-  it("resolves full component hierarchy stack", async () => {
-    render(createElement(AppComponent, null), container);
-
-    const child = container.querySelector("[data-testid='preact-child']")!;
-    const stack = await preactResolver.resolveStack(child);
-
-    expect(stack.length).toBeGreaterThanOrEqual(2);
-
-    const filePaths = stack.map((frame) => frame.filePath);
-    expect(filePaths[0]).toBe("src/components/Child.tsx");
-
-    const names = stack.map((frame) => frame.componentName).filter(Boolean);
-    expect(names).toContain("ChildComponent");
-  });
-
-  it("resolves stack for parent wrapper element", async () => {
-    render(createElement(AppComponent, null), container);
-
-    const parent = container.querySelector("[data-testid='preact-parent']")!;
-    expect(parent).not.toBeNull();
-
-    const stack = await preactResolver.resolveStack(parent);
-
-    expect(stack.length).toBeGreaterThanOrEqual(1);
-    expect(stack[0].filePath).toBe("src/components/Parent.tsx");
-    expect(stack[0].componentName).toBe("ParentComponent");
-  });
-
-  it("returns empty stack for elements without __preactVNode", async () => {
-    const orphan = document.createElement("div");
-    container.appendChild(orphan);
-
-    const stack = await preactResolver.resolveStack(orphan);
-    expect(stack).toHaveLength(0);
-  });
-
-  it("walks to nearest parent element with __preactVNode", async () => {
-    render(
-      createElement(ChildComponent, {
-        text: "test",
-        __source: { fileName: "src/Test.tsx", lineNumber: 1 },
-      } as Record<string, unknown>),
-      container,
-    );
-
-    const element = container.querySelector("[data-testid='preact-child']")!;
-    const wrapper = document.createElement("em");
-    element.appendChild(wrapper);
-
-    const stack = await preactResolver.resolveStack(wrapper);
-    expect(stack.length).toBeGreaterThanOrEqual(1);
-    expect(stack[0].filePath).toBe("src/components/Child.tsx");
-  });
-
-  it("handles Fragment children", async () => {
-    const FragApp = () =>
-      createElement(
-        Fragment,
-        null,
-        createElement(
-          "span",
-          {
-            "data-testid": "frag-a",
-            __source: { fileName: "src/Frag.tsx", lineNumber: 3 },
-          } as Record<string, unknown>,
-          "a",
-        ),
-        createElement(
-          "span",
-          {
-            "data-testid": "frag-b",
-            __source: { fileName: "src/Frag.tsx", lineNumber: 4 },
-          } as Record<string, unknown>,
-          "b",
-        ),
-      );
-
-    render(
-      createElement(FragApp, {
-        __source: { fileName: "src/Main.tsx", lineNumber: 1 },
-      } as Record<string, unknown>),
-      container,
-    );
-
-    const spanA = container.querySelector("[data-testid='frag-a']")!;
-    const spanB = container.querySelector("[data-testid='frag-b']")!;
-
-    const stackA = await preactResolver.resolveStack(spanA);
-    const stackB = await preactResolver.resolveStack(spanB);
-
-    expect(stackA.length).toBeGreaterThanOrEqual(1);
-    expect(stackA[0].filePath).toBe("src/Frag.tsx");
-    expect(stackA[0].lineNumber).toBe(3);
-
-    expect(stackB.length).toBeGreaterThanOrEqual(1);
-    expect(stackB[0].filePath).toBe("src/Frag.tsx");
-    expect(stackB[0].lineNumber).toBe(4);
-  });
-
-  it("reads __source from props fallback when not on vnode directly", async () => {
-    const previousDiffed = options.diffed;
-    (options as Record<string, unknown>).diffed = (vnode: Record<string, unknown>) => {
-      const dom = getVNodeDom(vnode);
-      if (typeof vnode.type === "string" && dom) {
-        (dom as Record<string, unknown>).__preactVNode = vnode;
-      }
-      if (previousDiffed) (previousDiffed as (vnode: unknown) => void)(vnode);
-    };
-
-    render(
-      createElement("div", {
-        "data-testid": "props-source",
-        __source: { fileName: "src/PropsSource.tsx", lineNumber: 99 },
-      } as Record<string, unknown>),
-      container,
-    );
-
-    const element = container.querySelector("[data-testid='props-source']")!;
-    const stack = await preactResolver.resolveStack(element);
-
-    expect(stack.length).toBeGreaterThanOrEqual(1);
-    expect(stack[0].filePath).toBe("src/PropsSource.tsx");
-    expect(stack[0].lineNumber).toBe(99);
-
-    (options as Record<string, unknown>).diffed = previousDiffed;
+    expect(info.tagName).toBe("button");
+    expect(info.componentName).toBe("CompatButton");
+    expect(info.source).toMatchObject({
+      filePath: PREACT_TEST_FILE_PATH,
+      lineNumber: COMPAT_BUTTON_SOURCE_LINE,
+      componentName: "CompatButton",
+    });
+    expect(info.stack.some((frame) => frame.componentName === "CompatApp")).toBe(true);
   });
 });

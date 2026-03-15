@@ -13,10 +13,10 @@ import { getTagName } from "./utils/get-tag-name.js";
 import { isElement } from "./utils/is-element.js";
 
 const DEFAULT_RESOLVERS: FrameworkResolver[] = [
-  preactResolver,
   svelteResolver,
   vueResolver,
   solidResolver,
+  preactResolver,
 ];
 
 const resolveFrameworkStack = async (
