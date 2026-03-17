@@ -8,10 +8,16 @@ import { reactResolver } from "./frameworks/react.js";
 import { svelteResolver } from "./frameworks/svelte.js";
 import { vueResolver } from "./frameworks/vue.js";
 import { solidResolver } from "./frameworks/solid.js";
+import { preactResolver } from "./frameworks/preact.js";
 import { getTagName } from "./utils/get-tag-name.js";
 import { isElement } from "./utils/is-element.js";
 
-const DEFAULT_RESOLVERS: FrameworkResolver[] = [svelteResolver, vueResolver, solidResolver];
+const DEFAULT_RESOLVERS: FrameworkResolver[] = [
+  preactResolver,
+  svelteResolver,
+  vueResolver,
+  solidResolver,
+];
 
 const resolveFrameworkStack = async (
   element: Element,

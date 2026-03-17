@@ -15,6 +15,7 @@ export {
 export { svelteResolver } from "./frameworks/svelte.js";
 export { vueResolver } from "./frameworks/vue.js";
 export { solidResolver } from "./frameworks/solid.js";
+export { preactResolver } from "./frameworks/preact.js";
 
 export { formatStackFrame } from "./utils/format-stack-frame.js";
 export { formatStack } from "./utils/format-stack.js";
